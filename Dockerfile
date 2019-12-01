@@ -7,6 +7,12 @@ LABEL Descruption="PHP 7.2 swoole 开发环境"
 ENV TIMEZONE Asia/Chongqing
 ENV DEBIAN_FRONTEND noninteractive
 
+# 调试地址，默认用苹果主机的地址，如果是 windows 修改 mac 为 win 即可
+ENV XDEBUG_HOST docker.for.mac.localhost
+# 调试监听端口
+ENV XDEBUG_PORT 9001
+ENV XDEBUG_IDEKEY PHPSTORM
+
 RUN echo $TIMEZONE > /etc/timezone \
     && mkdir /data
 
@@ -41,15 +47,14 @@ RUN pecl install -o -f redis \
     && echo " " >> /etc/php/7.2/fpm/php.ini \
     && echo "[xdebug]" >> /etc/php/7.2/fpm/php.ini \
     && echo "zend_extension=xdebug.so" >> /etc/php/7.2/fpm/php.ini \
-    && echo "xdebug.idekey = PHPSTORM" >> /etc/php/7.2/fpm/php.ini \
+    && echo "xdebug.idekey = ${XDEBUG_IDEKEY}" >> /etc/php/7.2/fpm/php.ini \
     && echo "xdebug.remote_enable = 1" >> /etc/php/7.2/fpm/php.ini \
     && echo "xdebug.remote_handler = \"dbgp\"" >> /etc/php/7.2/fpm/php.ini \
     && echo "xdebug.remote_mode = \"req\"" >> /etc/php/7.2/fpm/php.ini \
-    && echo "xdebug.remote_connect_back = on" >> /etc/php/7.2/fpm/php.ini \
-    && echo "xdebug.remote_autostart = on" >> /etc/php/7.2/fpm/php.ini \
-    && echo "xdebug.remote_host = \"0.0.0.0\"" >> /etc/php/7.2/fpm/php.ini \
-    && echo "xdebug.remote_port = 9001" >> /etc/php/7.2/fpm/php.ini \
-    && echo "xdebug.remote_log = /var/log/xdebug-remote.log" >> /etc/php/7.2/fpm/php.ini
+    && echo "xdebug.remote_autostart = 1" >> /etc/php/7.2/fpm/php.ini \
+    && echo "xdebug.remote_host = ${XDEBUG_HOST}" >> /etc/php/7.2/fpm/php.ini \
+    && echo "xdebug.remote_port = ${XDEBUG_PORT}" >> /etc/php/7.2/fpm/php.ini \
+    && echo "xdebug.remote_log = /data/xdebug-remote.log" >> /etc/php/7.2/fpm/php.ini
 
 RUN apt-get install -y --no-install-recommends libmcrypt-dev \
 	&& rm -r /var/lib/apt/lists/* \
@@ -61,7 +66,7 @@ RUN sed -i "s/^;date\.timezone.*$/date\.timezone = Asia\/Chongqing/g" /etc/php/7
     && sed -i "s/^upload_max_filesize.*$/upload_max_filesize = 200M/g" /etc/php/7.2/fpm/php.ini \
     && sed -i "s/^post_max_size.*$/post_max_size = 100M/g" /etc/php/7.2/fpm/php.ini \
     && sed -i "s/^pid.*$/pid = \/run\/php7.2-fpm.pid/g" /etc/php/7.2/fpm/php-fpm.conf \
-    && sed -i 's/^listen =.*$/listen = 0.0.0.0:9000/g' /etc/php/7.2/fpm/pool.d/www.conf \
+    && sed -i 's/^listen.*$/listen = 127.0.0.1:9000/g' /etc/php/7.2/fpm/pool.d/www.conf \
     && sed -i 's/^user.*$/user = root/g' /etc/php/7.2/fpm/pool.d/www.conf \
     && sed -i 's/^group.*$/group = root/g' /etc/php/7.2/fpm/pool.d/www.conf
 
@@ -88,8 +93,6 @@ WORKDIR /data
 VOLUME ["/data"]
 
 EXPOSE 80
-EXPOSE 443
-EXPOSE 8080
 EXPOSE 8000
 EXPOSE 9000
 EXPOSE 9001
