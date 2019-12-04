@@ -66,7 +66,7 @@ RUN sed -i "s/^;date\.timezone.*$/date\.timezone = Asia\/Chongqing/g" /etc/php/7
     && sed -i "s/^upload_max_filesize.*$/upload_max_filesize = 200M/g" /etc/php/7.2/fpm/php.ini \
     && sed -i "s/^post_max_size.*$/post_max_size = 100M/g" /etc/php/7.2/fpm/php.ini \
     && sed -i "s/^pid.*$/pid = \/run\/php7.2-fpm.pid/g" /etc/php/7.2/fpm/php-fpm.conf \
-    && sed -i 's/^listen =.*$/listen = 127.0.0.1:9000/g' /etc/php/7.2/fpm/pool.d/www.conf \
+    && sed -i 's/^listen =.*$/listen = 0.0.0.0:9000/g' /etc/php/7.2/fpm/pool.d/www.conf \
     && sed -i 's/^user =.*$/user = root/g' /etc/php/7.2/fpm/pool.d/www.conf \
     && sed -i 's/^group =.*$/group = root/g' /etc/php/7.2/fpm/pool.d/www.conf
 
