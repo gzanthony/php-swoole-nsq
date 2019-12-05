@@ -8,9 +8,9 @@ ENV TIMEZONE Asia/Chongqing
 ENV DEBIAN_FRONTEND noninteractive
 
 # 调试地址，默认用苹果主机的地址，如果是 windows 修改 mac 为 win 即可
-ENV XDEBUG_HOST docker.for.mac.localhost
+ENV XDEBUG_HOST docker.for.win.localhost
 # 调试监听端口
-ENV XDEBUG_PORT 9001
+ENV XDEBUG_PORT 9100
 ENV XDEBUG_IDEKEY PHPSTORM
 
 RUN echo $TIMEZONE > /etc/timezone \
